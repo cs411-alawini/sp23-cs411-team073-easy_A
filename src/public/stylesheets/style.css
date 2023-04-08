@@ -25,6 +25,10 @@ table thead th {
   border-bottom: 1px solid #000;
 }
 
+table th + th {
+  border-left: 1px solid black;
+}
+
 table td + td { 
   border-left:2px solid black; 
 }
