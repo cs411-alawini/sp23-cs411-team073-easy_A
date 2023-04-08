@@ -1,0 +1,58 @@
+<html >
+
+<head>
+    <meta charset="utf-8">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<body>
+    <section class="home">
+    <h1>Flights Details</h1>
+    <div class="row">
+        <div class="column" style="background-color:#aaa;">
+          <h2>Departing Flights</h2>
+    		<table class="flight-table">
+    			<tr>
+      			<th>Flight</th><th>Departure Time</th><th>Arrival Time</th><th>Delay Probability</th>
+   			</tr>
+
+   		<% for (var i = 0; i < departingflights.length; i++) { %>
+    			<tr>
+      			<td><%= departingflights[i].AirlineId + " " + departingflights[i].FlightNumber %></td>
+      			<td><%= departingflights[i].ScheduledDeparture %></td>
+      			<td><%= departingflights[i].ScheduledArrival %></td>
+			<% for (var j = 0; j < delayinfo.length; j++) { %>
+				<% if(departingflights[i].AirlineName === delayinfo[j].AirlineName) { %>
+					<td><%= delayinfo[j].DelayProbability %></td>
+				<% } %>
+			<% } %>	
+    			</tr>    
+   		<% } %>
+		</table>
+	</div>
+        <% if(typeof(returnflights) != "undefined") { %>
+        <div class="column" style="background-color:#bbb;">
+          <h2>Returning Flights</h2>
+                <table class="return-flight-table">
+                        <tr>
+                        <th>Flight</th><th>Departure Time</th><th>Arrival Time</th>
+                        </tr>
+
+                <% for (var i = 0; i < returnflights.length; i++) { %>
+                        <tr>
+                        <td><%= returnflights[i].AirlineId + " " + returnflights[i].FlightNumber %></td>
+                        <td><%= returnflights[i].ScheduledDeparture %></td>
+                        <td><%= returnflights[i].ScheduledArrival %></td>
+			<% for (var j = 0; j < delayinfo.length; j++) { %>
+                                <% if(returnflights[i].AirlineName === delayinfo[j].AirlineName) { %>                                           <td><%= delayinfo[j].DelayProbability %></td>
+                                <% } %>
+                        <% } %>
+                        </tr>
+                <% } %>
+                </table>
+        </div>
+	<% } %>
+    </section>
+</body>
+
+</html>

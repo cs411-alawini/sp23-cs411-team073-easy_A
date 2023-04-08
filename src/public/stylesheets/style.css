@@ -1,0 +1,61 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.div {
+  padding: 20px 20px;
+}
+
+#retdate {
+  display: none;
+}
+
+table {
+  border: 1px solid black;
+  padding:0em 2em;
+  border-collapse: collapse;
+}
+
+table thead th {
+  border-bottom: 1px solid #000;
+}
+
+table td + td { 
+  border-left:2px solid black; 
+}
+
+tr {
+  border-bottom: 1px solid black;
+}
+
+td {
+  padding: 2em;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.box {
+	background-color: lightgrey;
+  	width: 300px;
+  	padding: 50px;
+  	margin: 20px;
+}

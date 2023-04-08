@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Airtime</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Authorized Users Only!</h1>
+    <div class="container mt-4">
+     <div class="card">
+       <div class="card-body">
+         <h2>Add Flight Details below</h2>
+         <form action="addflight" method="POST">
+           <div class="form-group">
+             <label for="From">From</label>
+             <input type="text" id="from" placeholder="Select departure airport" name="from">
+	     <label for="To">To</label>
+	     <input type="text" id="to" placeholder="Select destination airport" name="to">
+	     <label for="FlightDate">Flight Date</label>
+	     <input type="date" id="flightdate" placeholder="Select date of flight" name="flightdate">
+	     <label for="DeptTime">Departure Time</label>
+	     <input type="text" id="depttime" placeholder="Enter departure time" name="depttime">
+	     <label for="ArrTime">Arrival Time</label>
+             <input type="text" id="arrtime" placeholder="Enter arrival time" name="arrtime">
+	     <label for="AirlineName">Airline Name</label>
+             <input type="text" id="airlinename" placeholder="Select Airline Name" name="airlinename">
+	     <label for="AirlineId">Airline ID</label>
+             <input type="text" id="airlineid" placeholder="Select Airline ID" name="airlineid">
+	     <label for="FlightNumber">Flight Number</label>
+             <input type="text" id="flightnum" placeholder="Enter Flight Number" name="flightnum">
+
+           </div>
+           <button type="submit" class="btn btn-primary">Submit</button>
+         </form>
+    </div>
+    <div class="card-body">
+         <h2>Update Flight Schedule</h2>
+         <form action="updateflight" method="POST">
+           <div class="form-group">
+             <label for="FlightDate">Flight Date</label>
+             <input type="date" id="updateflightdate" placeholder="Select date of flight" name="updateflightdate">
+             <label for="DeptTime">Departure Time</label>
+             <input type="text" id="updatedepttime" placeholder="Enter new departure time" name="updatedepttime">
+             <label for="ArrTime">Arrival Time</label>
+             <input type="text" id="updatearrtime" placeholder="Enter new arrival time" name="updatearrtime">
+	     <label for="AirlineId">Airline ID</label>
+             <input type="text" id="airlineid" placeholder="Select Airline ID" name="airlineid">
+             <label for="FlightNumber">Flight Number</label>
+             <input type="text" id="flightnum" placeholder="Enter Flight Number" name="flightnum">
+           </div>
+           <button type="submit" class="btn btn-primary">Submit</button>
+         </form>
+    </div>
+    <div class="card-body">
+         <h2>Report New Airline</h2>
+         <form action="addairline" method="POST">
+           <div class="form-group">
+             <label for="AirlineId">Airline ID</label>
+             <input type="text" id="newairlineid" placeholder="Enter new Airline Id" name="newairlineid">
+             <label for="AirlineName">Airline Name</label>
+             <input type="text" id="newairlinename" placeholder="Enter New Airline Name" name="newairlinename">
+           </div>
+           <button type="submit" class="btn btn-primary">Submit</button>
+         </form>
+    </div>
+    <div class="card-body">
+         <h2>Report Airline Bankruptcy</h2>
+         <form action="delairline" method="POST">
+           <div class="form-group">
+             <label for="AirlineId">Airline ID</label>
+             <input type="text" id="delairlineid" placeholder="Enter Airline Id" name="delairlineid">
+             <label for="AirlineName">Airline Name</label>
+             <input type="text" id="delairlinename" placeholder="Enter Airline Name" name="delairlinename">
+           </div>
+           <button type="submit" class="btn btn-primary">Submit</button>
+         </form>
+    </div>
+   </div>
+   <script>
+      function isRoundTrip() {
+	  const roundtrip = document.getElementById("roundtrip");
+          const returnDate = document.querySelector("#retdate");
+          if(roundtrip.checked)
+            returnDate.style.display="inline-block";
+	  else
+	    returnDate.style.display="none";
+     }
+    </script>
+  </body>
+</html>
+
