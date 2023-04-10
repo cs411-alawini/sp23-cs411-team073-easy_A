@@ -13,6 +13,8 @@ const connection = mysql.createConnection({
 const router = express.Router()
 connection.connect()
 
+var delayInformation;
+
 router.get('/', function(req, res) {
 	
 	var sqlperf = `SELECT A.AirlineName, ROUND((SUM(T1.Performance)/COUNT(A.AirlineName)),2) as AvgPerformance FROM(SELECT FR.AirlineName, (FR.CabinService + FR.ValueForMoney + FR.Entertainment + FR.FoodBev) as Performance FROM FlightReviews FR) AS T1 JOIN Airline A ON (T1.AirlineName = A.AirlineName) GROUP BY A.AirlineName ORDER BY AvgPerformance DESC LIMIT 5`;
@@ -24,6 +26,18 @@ router.get('/', function(req, res) {
                 }
                 res.render('index', {bestflights : result});
         });
+
+  var advancedsql = `SELECT F.AirlineName, temp.DelayCount/COUNT(*) AS DelayProbability FROM Flights F JOIN (SELECT F1.AirlineName, COUNT(*) as DelayCount FROM Flights F1 WHERE F1.DepartureDelay > 0 OR F1.ArrivalDelay > 0 GROUP BY F1.AirlineName) AS temp USING (AirlineName) GROUP BY F.AirlineName ORDER BY DelayProbability`;
+
+  console.log("index advanced");
+
+  connection.query(advancedsql, function(err, result) {
+        if (err) {
+                //res.send(err)
+                return;
+        }
+        delayInformation = result;
+  });
 });
 
 router.get('/authordisplay', function(req, res) {
@@ -50,30 +64,26 @@ router.post('/search', function(req, res) {
                    FROM Flights WHERE OriginAirport = '${destAirport}' AND DestinationAirport = '${originAirport}' AND
                    Date = '${retDateFormat}'`;
 
-	var advancedsql = `SELECT F.AirlineName, temp.DelayCount/COUNT(*) AS DelayProbability FROM Flights F JOIN (SELECT F1.AirlineName, COUNT(*) as DelayCount FROM Flights F1 WHERE F1.DepartureDelay > 0 OR F1.ArrivalDelay > 0 GROUP BY F1.AirlineName) AS temp USING (AirlineName) GROUP BY F.AirlineName ORDER BY DelayProbability`;
 
-	console.log(advancedsql);
 
 	connection.query(sqldepart, function(errdepart, resultdepart) {
-		connection.query(advancedsql, function(erradvanced, resultadvanced) {
 
 			if (retDate) {
 				connection.query(sqlreturn, function(errreturn, resultreturn) {
- 				if (errreturn || errdepart || erradvanced) {
+ 				if (errreturn || errdepart) {
         				//res.send(err)
             				return;
           			} 
-				res.render('flightdisplay.ejs', {departingflights : resultdepart, returnflights : resultreturn, delayinfo : resultadvanced});
+				res.render('flightdisplay.ejs', {departingflights : resultdepart, returnflights : resultreturn, delayinfo : delayInformation});
         		});
 			} else {
 				console.log("delay info");
-				if (errdepart || erradvanced) {
+				if (errdepart) {
                                 	//res.send(err)
                                 	return;
                         	}
-                		res.render('flightdisplay.ejs', {departingflights : resultdepart, delayinfo : resultadvanced});
+                		res.render('flightdisplay.ejs', {departingflights : resultdepart, delayinfo : delayInformation});
 			}
-		});
 	});
 });
 
