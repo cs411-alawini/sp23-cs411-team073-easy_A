@@ -63,3 +63,40 @@ td {
   	padding: 50px;
   	margin: 20px;
 }
+
+.top-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  background-color: #0079F1;
+  color: #fff;
+  text-align: right;
+  font-size: 16px;
+}
+
+.top-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.top-menu li {
+  display: inline-block;
+}
+
+.top-menu li a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #fff;
+}
+
+button {
+  background-color: #0079F1;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
