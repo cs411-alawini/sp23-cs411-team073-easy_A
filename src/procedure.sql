@@ -1,5 +1,5 @@
 CREATE PROCEDURE updateReviews(IN inputEmail VARCHAR(255), IN inputAirline VARCHAR(255), IN inputRatings INT)
-BEGIN
+myProc: BEGIN
 
     DECLARE varTotalReviews INT;
     DECLARE varAuthority INT;
@@ -14,6 +14,7 @@ BEGIN
     DECLARE varCabinService REAL;
     DECLARE varRecommend VARCHAR(10);
     DECLARE varCounter INT DEFAULT 0;
+    DECLARE varNumReviews INT;
 
     DECLARE exit_loop BOOLEAN DEFAULT FALSE;
 
@@ -21,6 +22,12 @@ BEGIN
                                 WHERE ReviewerEmail = inputEmail AND AirlineName = inputAirline);
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET exit_loop = TRUE;
+
+    SELECT COUNT(*) INTO varNumReviews FROM FlightReviews WHERE ReviewerEmail = inputEmail AND AirlineName = inputAirline;
+
+    IF varNumReviews < 5 THEN
+        LEAVE myProc;
+    END IF;
 
     SELECT T1.totalReviews, Authority INTO varTotalReviews, varAuthority FROM UserLogin JOIN
     (SELECT ReviewerEmail, count(*) AS totalReviews FROM FlightReviews GROUP BY ReviewerEmail) AS T1
