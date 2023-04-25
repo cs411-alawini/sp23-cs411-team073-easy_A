@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Authorized Login or Sign Up</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Authorized Login or Sign Up</h1>
+    <div id="login-form">
+      <h2>Login</h2>
+      <form>
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+				<button type="submit">Login</button>
+
+      </form>
+			<p>Don't have an authorized account? <button id="show-signup-form">Sign Up</button></p>
+    </div>
+    <div id="signup-form" style="display:none">
+      <h2>Sign Up</h2>
+      <form>
+				<label for="email">Email:</label>
+        <input type="text" id="newemail" name="newemail" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="newpassword" name="newpassword" required><br><br>
+
+        <button type="submit">Sign Up</button>
+      </form>
+			<p>Already have an account? <button id="show-login-form">Login</button></p>
+    </div>
+
+    <script>
+      // Show login form by default and toggle between login and signup forms
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+			const showSignupButton = document.getElementById('show-signup-form');
+      const showLoginButton = document.getElementById('show-login-form');
+
+			showSignupButton.addEventListener('click', event => {
+				loginForm.style.display = 'none';
+				signupForm.style.display = 'block';
+		  });
+
+			showLoginButton.addEventListener('click', event => {
+				signupForm.style.display = 'none';
+				loginForm.style.display = 'block';
+      });
+
+      // Save user info to local storage after successful login or signup
+      loginForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const username = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        // Check credentials with server and retrieve user information
+				fetch('/authorizedlogin', {
+								method: 'POST',
+								headers: {
+												'Content-Type': 'application/json'
+								},
+								body: JSON.stringify({
+												username: username,
+												password: password
+								})
+				})
+				.then((response) => {
+								if (response.status === 200) {
+												 return response.json();
+								} else {
+												return response.text().then(text => {
+																throw new Error(text);
+												});
+								}
+				})
+				.then(data => {
+								localStorage.setItem('loggedInUser', username);
+								alert(`Welcome back, ${username}!`);
+								window.location.href = '/authordisplay';
+				})
+				.catch(error => {
+								alert(error.message);
+								location.reload()
+				});
+      });
+      signupForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const password = document.getElementById('newpassword').value;
+        const email = document.getElementById('newemail').value;
+        // Send user information to server to create new account
+				fetch('/authorizedsignup', {
+                method: 'POST',
+                headers: {
+                        'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                        username: email,
+                        password: password
+                })
+        })
+				.then((response) => {
+                if (response.status === 201) {
+                         return response.json();
+                } else {
+                        return response.text().then(text => {
+                                throw new Error(text);
+                        });
+                }
+        })
+        .then(data => {
+                localStorage.setItem('loggedInUser', email);
+                alert(`Welcome ${email}!`);
+								window.location.href = '/authordisplay';
+        })
+        .catch(error => {
+								alert(error.message);
+								location.reload();
+        });
+      });
+    </script>
+  </body>
+</html>
+
+

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reviews</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  <body>
+     <div class="card">
+       <div class="card-body">
+         <h2>Please provide your reviews below</h2>
+         <form id="review-form" action="submitreview" method="POST">
+           <div class="form-group">
+								<input type="hidden" id="username" name="username" value="stephengsweet@hotmail.com">
+
+								<label for="AirlineId">Select an Airline</label>
+								<input type="text" id="airline" name="airline" list="airlinelist">
+                <datalist id="airlinelist">
+                        <% for (var i = 0; i < airlines.length; i++) { %>
+                                <option value="<%= airlines[i].AirlineId %>"><%= airlines[i].AirlineId + "     " + airlines[i].AirlineName %></option>
+                        <% } %>
+                </datalist>
+
+								<label for="revDate">Review Date</label> 
+								<input type="date" id="revdate" placeholder="Today's date" name="revdate"></br><br>
+
+								<textarea id="review" placeholder="Your review comments here" name="review" rows="10" cols="50"></textarea></br><br>
+
+								<label for="travelType">Travel Reason</label>
+                <select id="traveltype" name="traveltype">
+												<option value="solo">Solo Leisure</option>
+												<option value="family">Family Leisure</option>
+												<option value="couple">Couple Leisure</option>
+												<option value="group">Group</option>
+												<option value="business">Business</option>
+								</select>
+								<label for="cabinType">Cabin</label>
+                <select id="cabintype" name="cabintype">
+                        <option value="first">First Class</option>
+                        <option value="business">Business Class</option>
+                        <option value="premium">Premium Economy</option>
+                        <option value="economy">Economy Class</option>
+                </select>
+
+								<label for="Route">Route</label>
+                <input type="text" id="route" placeholder="Route taken" name="route">
+
+								<label for="flyDate">Date of Travel</label>
+								<input type="date" id="flydate" placeholder="Date of Travel" name="flydate"></br><br>
+
+								<fieldset>
+												<legend>Rate your experience:</legend>
+
+												<label for="seatcomfort">Seat Comfort:</label>
+											  <select id="comfort" name="comfort">
+																<option value="1">1</option>
+																<option value="1.5">1.5</option>
+																<option value="2">2</option>
+																<option value="2.5">2.5</option>
+																<option value="3">3</option>
+																<option value="3.5">3.5</option>
+																<option value="4">4</option>
+																<option value="4.5">4.5</option>
+																<option value="5">5</option>
+												</select>
+
+												<label for="cabinservice">Cabin Service:</label>
+                        <select id="service" name="service">
+                                <option value="1">1</option>
+                                <option value="1.5">1.5</option>
+                                <option value="2">2</option>
+                                <option value="2.5">2.5</option>
+                                <option value="3">3</option>
+                                <option value="3.5">3.5</option>
+                                <option value="4">4</option>
+                                <option value="4.5">4.5</option>
+                                <option value="5">5</option>
+                        </select>
+
+												<label for="foodbev">Food and Beverages:</label>
+                        <select id="foodbev" name="foodbev">
+                                <option value="1">1</option>
+                                <option value="1.5">1.5</option>
+                                <option value="2">2</option>
+                                <option value="2.5">2.5</option>
+                                <option value="3">3</option>
+                                <option value="3.5">3.5</option>
+                                <option value="4">4</option>
+                                <option value="4.5">4.5</option>
+                                <option value="5">5</option>
+                        </select>
+
+												<label for="entertainment">In Flight Entertainment:</label>
+                        <select id="entertainment" name="entertainment">
+                                <option value="1">1</option>
+                                <option value="1.5">1.5</option>
+                                <option value="2">2</option>
+                                <option value="2.5">2.5</option>
+                                <option value="3">3</option>
+                                <option value="3.5">3.5</option>
+                                <option value="4">4</option>
+                                <option value="4.5">4.5</option>
+                                <option value="5">5</option>
+                        </select>
+
+												<label for="grservice">Ground Service:</label>
+                        <select id="grservice" name="grservice">
+                                <option value="1">1</option>
+                                <option value="1.5">1.5</option>
+                                <option value="2">2</option>
+                                <option value="2.5">2.5</option>
+                                <option value="3">3</option>
+                                <option value="3.5">3.5</option>
+                                <option value="4">4</option>
+                                <option value="4.5">4.5</option>
+                                <option value="5">5</option>
+												</select>
+
+												<label for="valuemoney">Value for Money:</label>
+                        <select id="money" name="money">
+                                <option value="1">1</option>
+                                <option value="1.5">1.5</option>
+                                <option value="2">2</option>
+                                <option value="2.5">2.5</option>
+                                <option value="3">3</option>
+                                <option value="3.5">3.5</option>
+                                <option value="4">4</option>
+                                <option value="4.5">4.5</option>
+                                <option value="5">5</option>
+												</select></br>
+								</fieldset><br>
+								<label for="recommend">Recommended</label>
+                <select id="recommend" name="recommend">
+                        <option value="yes">YES</option>
+                        <option value="no">NO</option>
+								</select>
+					 </div><br>
+           <button type="submit" class="btn btn-primary">Submit Review</button>
+				 </form><br><br>
+				 <button id="logout-btn">Logout</button>
+    </div>
+   </div>
+	 <script>
+        const usernameField = document.getElementById('username');
+        const loggedInUser = localStorage.getItem('loggedInUser');
+
+        if (loggedInUser) {
+                usernameField.value = loggedInUser;
+        } else {
+                alert('You must be logged in to submit a review');
+                window.location.href = '/login';
+        }
+
+				const logoutBtn = document.querySelector('#logout-btn');
+				logoutBtn.addEventListener('click', () => {
+								localStorage.removeItem('loggedInUser');
+								alert("Logged out successfully");
+								location.href = '/';
+
+				});
+   </script>
+  </body>
+</html>

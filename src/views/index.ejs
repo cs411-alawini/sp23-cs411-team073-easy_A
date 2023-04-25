@@ -7,35 +7,54 @@
   <body>
     <h1>Airtime: Search On-Time Flights</h1>
     <div class="container mt-4">
+     <div class="top-menu">
+				<ul>
+								<li><a href="/login">Login</a></li>
+								<li><a href="/login">Sign up</a></li>
+				</ul>
+     </div>
      <div class="card">
        <div class="card-body">
          <h2>Please search for your flight below</h2>
          <form action="search" method="POST">
            <div class="form-group">
-	     <label for="oneside">One Way</label>
-	     <input type="radio" id="oneway" name="triptype" value="oneway" onclick="javascript:isRoundTrip()";>
-  	     <label for="roundtrip">Round Trip</label>
-             <input type="radio" id="roundtrip" name="triptype" onclick="javascript:isRoundTrip()"; value="roundtrip"><br>	   
-             <label for="From">From</label>
-             <input type="text" id="from" placeholder="Select departure airport" name="from">
-	     <label for="To">To</label>
-	     <input type="text" id="to" placeholder="Select destination airport" name="to">
-	     <label for="DeptDate">Departure Date</label>
-	     <input type="date" id="deptdate" placeholder="Select departure date" name="deptdate">
-	     <label for="retdate">Return Date</label>
-	     <input type="date" id="retdate" placeholder="Select return date" name="retdate">
-           </div>
-           <button type="submit" class="btn btn-primary">Submit</button>
+								<label for="oneside">One Way</label>
+								<input type="radio" id="oneway" name="triptype" value="oneway" onclick="javascript:isRoundTrip()";>
+  	     				<label for="roundtrip">Round Trip</label>
+<input type="radio" id="roundtrip" name="triptype" onclick="javascript:isRoundTrip()"; value="roundtrip"><br><br>
+								<label for="From">From</label>
+								<input type="text" id="from" name="from" list="deptairport">
+								<datalist id="deptairport">
+												<% for (var i = 0; i < airports.length; i++) { %>
+                                <option value="<%= airports[i].AirportId %>"><%= airports[i].AirportId + "     " + airports[i].City %></option>
+												<% } %>
+								</datalist>
+
+								<label for="To">To</label>
+								<input type="text" id="to" name="to" list="arrairport">
+                <datalist id="arrairport">
+                        <% for (var i = 0; i < airports.length; i++) { %>
+                                <option value="<%= airports[i].AirportId %>"><%= airports[i].AirportId + "     " + airports[i].City %></option>
+                        <% } %>
+                </datalist>
+
+					     <label for="DeptDate">Departure Date</label>
+				       <input type="date" id="deptdate" placeholder="Select departure date" name="deptdate">
+				       <label for="retdate">Return Date</label>
+	             <input type="date" id="retdate" placeholder="Select return date" name="retdate">
+					 </div><br><br>
+           <button type="submit" class="btn btn-primary">Search</button>
          </form>
     </div>
    </div>
    <div class="box">
 	   <h2>Best Rated Flights</h2>
 		 <% for (var i = 0; i < bestflights.length; i++) { %>
-		 <span><%= bestflights[i].AirlineName + " " +  bestflights[i].AvgPerformance %></span></br>
+		 <span><a href = "<%= airlineMap.get(bestflights[i].AirlineName) %>"><%= bestflights[i].AirlineName %></a>     <%= bestflights[i].AvgPerformance %></span></br>
 		 <% } %>
    </div>
-   <a href="/authordisplay">For Authorized Users Only!</a>
+	 <a href="/authorizedlogin">For Authorized Users Only!</a></br>
+   <a href="/reviews">Review your flight!</a>
    <script>
       function isRoundTrip() {
 	  const roundtrip = document.getElementById("roundtrip");
