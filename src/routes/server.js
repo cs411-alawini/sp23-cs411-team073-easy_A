@@ -228,7 +228,7 @@ router.post('/updateflight', function(req, res) {
                         console.log("Departure delay " + diffInHourDept + " arrival delay " + diffInHourArr);
 
                         var sqlUpdate = `UPDATE Flights SET ScheduledDeparture='${deptTime}', ScheduledArrival='${arrTime}', DepartureDelay=${diffInHourDept}, ArrivalDelay=${diffInHourArr} WHERE Date='${flightDateFormat}' AND AirlineId='${airlineId}' AND FlightNumber='${flightNumInt}'`;
-
+// DepartureDelay=${diffInHourDept}, ArrivalDelay=${diffInHourArr}
                         connection.query(sqlUpdate, function(err, result) {
                             console.log("updating...")
                                 if (err) {
@@ -272,14 +272,13 @@ router.post('/updateflight', function(req, res) {
 //
 //        console.log("Departure delay " + diffInHourDept + " arrival delay " + diffInHourArr);
 //
-//        var sql = `UPDATE Flights SET ScheduledDeparture='${deptTime}', ScheduledArrival='${arrTime}', DepartureDelay='${diffInHourDept}',
-//        ArrivalDelay='${diffInHourArr}' WHERE Date='${flightDateFormat}' AND AirlineId='${airlineId}' AND FlightNumber='${flightNumInt}'`;
+//        var sql = `UPDATE Flights SET ScheduledDeparture='${deptTime}', ScheduledArrival='${arrTime}' WHERE Date='${flightDateFormat}' AND AirlineId='${airlineId}' AND FlightNumber='${flightNumInt}'`;
 //
 //	console.log(sql);
 //
 //        connection.query(sql, function(err, result) {
 //                if (err) {
-//                        //res.send(err)
+//                        console.log(err)
 //                        return;
 //                }
 //                res.redirect('flightupdated');

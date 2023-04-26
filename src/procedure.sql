@@ -16,7 +16,7 @@ myProc: BEGIN
     DECLARE varCounter INT DEFAULT 0;
     DECLARE varNumReviews INT;
     DECLARE varPerfCounter INT DEFAULT 0;
-    DECLARE varPerformance VARCHAR(255);
+    DECLARE varPerformance VARCHAR(255) DEFAULT "SATISFACTORY";
     DECLARE varTotalRatings REAL DEFAULT 0.0;
 
     BEGIN
