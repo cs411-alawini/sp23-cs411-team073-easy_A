@@ -49,10 +49,12 @@
    </div>
    <div class="box">
 	   <h2>Best Rated Flights</h2>
-		 <% for (var i = 0; i < bestflights.length; i++) { %>
+		 <% for (var i = 0; i < 5; i++) { %>
 		 <span><a href = "<%= airlineMap.get(bestflights[i].AirlineName) %>"><%= bestflights[i].AirlineName %></a>     <%= bestflights[i].AvgPerformance %></span></br>
-		 <% } %>
+		 <% } %><br><br>
+		 <a href="/avgflightdisplay">View ratings for all flights here</a>
    </div>
+
 	 <a href="/authorizedlogin">For Authorized Users Only!</a></br>
    <a href="/reviews">Review your flight!</a>
    <script>

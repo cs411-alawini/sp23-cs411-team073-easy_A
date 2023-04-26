@@ -52,10 +52,11 @@ connection.connect()
 router.use(bodyParser.json());
 
 var delayInformation;
+var perfInformation;
 
 router.get('/', function(req, res) {
 
-	var sqlperf = `SELECT A.AirlineName, ROUND((SUM(T1.Performance)/COUNT(A.AirlineName)),2) as AvgPerformance FROM(SELECT FR.AirlineName, (FR.CabinService + FR.ValueForMoney + FR.Entertainment + FR.FoodBev) as Performance FROM FlightReviews FR) AS T1 JOIN Airline A ON (T1.AirlineName = A.AirlineName) GROUP BY A.AirlineName ORDER BY AvgPerformance DESC LIMIT 5`;
+    var sqlperf = `SELECT A.AirlineId, A.Performance, A.AirlineName, ROUND((SUM(T1.Performance)/COUNT(A.AirlineName)),2) as AvgPerformance FROM(SELECT FR.AirlineId, (FR.CabinService + FR.ValueForMoney + FR.Entertainment + FR.FoodBev) as Performance FROM FlightReviews FR) AS T1 JOIN Airline A ON (T1.AirlineId = A.AirlineId) GROUP BY A.AirlineId ORDER BY AvgPerformance DESC`;
 
   var advancedsql = `SELECT F.AirlineName, temp.DelayCount/COUNT(*) AS DelayProbability FROM Flights F JOIN (SELECT F1.AirlineName, COUNT(*) as DelayCount FROM Flights F1 WHERE F1.DepartureDelay > 0 OR F1.ArrivalDelay > 0 GROUP BY F1.AirlineName) AS temp USING (AirlineName) GROUP BY F.AirlineName ORDER BY DelayProbability`;
 
@@ -69,6 +70,7 @@ router.get('/', function(req, res) {
 												console.log(err);
 								}
 								res.render('index', { bestflights : results[0][0], airlineMap: airlineLink,  airports : results[1][0]});
+								perfInformation = results[0][0];
 				}
 	);
 
@@ -80,6 +82,10 @@ router.get('/', function(req, res) {
         delayInformation = result;
   });
 
+});
+
+router.get('/avgflightdisplay', function(req, res) {
+    res.render('avgflightdisplay', {bestflights : perfInformation, airlineMap : airlineLink});
 });
 
 router.get('/authordisplay', function(req, res) {
@@ -153,7 +159,9 @@ router.post('/addflight', function(req, res) {
 
 	var flightNumInt = parseInt(flightNum);
 
-	var sql = `INSERT INTO Flights (Date, AirlineId, FlightNumber, OriginAirport, DestinationAirport, ScheduledDeparture, ScheduledArrival, AirlineName) VALUES ('${flightDateFormat}', '${airlineId}', '${flightNumInt}', '${originAirport}', '${destAirport}', '${deptTime}', '${arrTime}', '${airlineName}')`;
+	var sql = `INSERT INTO Flights (Date, AirlineId, FlightNumber, OriginAirport, DestinationAirport, ScheduledDeparture, ScheduledArrival,
+	AirlineName, DepartureDelay, ArrivalDelay) VALUES
+	('${flightDateFormat}', '${airlineId}', '${flightNumInt}', '${originAirport}', '${destAirport}', '${deptTime}', '${arrTime}', '${airlineName}', 0, 0)`;
 
 	connection.query(sql, function(err, result) {
                 if (err) {
@@ -178,17 +186,104 @@ router.post('/updateflight', function(req, res) {
 
         var flightNumInt = parseInt(flightNum);
 
-        var sql = `UPDATE Flights SET ScheduledDeparture='${deptTime}', ScheduledArrival='${arrTime}' WHERE Date='${flightDateFormat}' AND AirlineId='${airlineId}' AND FlightNumber='${flightNumInt}'`;
+        var oldDepartureTime;
+        var oldArrivalTime;
+        console.log("here");
 
-	console.log(sql);
-
-        connection.query(sql, function(err, result) {
+        var selectSql = `SELECT ScheduledDeparture, ScheduledArrival FROM Flights WHERE Date='${flightDateFormat}' AND AirlineId='${airlineId}' AND FlightNumber='${flightNumInt}'`;
+        connection.query(selectSql, function(err, result) {
                 if (err) {
                         //res.send(err)
                         return;
                 }
-                res.redirect('flightupdated');
+                oldDepartureTime = result[0].ScheduledDeparture;
+                oldArrivalTime = result[0].ScheduledArrival;
+
+                var time1 = new Date();
+                time1.setHours(oldDepartureTime.substr(0, 2));
+                        time1.setMinutes(oldDepartureTime.substr(2, 2));
+                        time1.setSeconds(0);
+
+                        var time2 = new Date();
+                        time2.setHours(deptTime.substr(0, 2));
+                        time2.setMinutes(deptTime.substr(2, 2));
+                        time2.setSeconds(0);
+
+                        var diffInMs = time2 - time1;
+                        const diffInHourDept = Math.round(diffInMs / 3600000);
+
+                        time1 = new Date();
+                        time1.setHours(oldArrivalTime.substr(0, 2));
+                        time1.setMinutes(oldDepartureTime.substr(2, 2));
+                        time1.setSeconds(0);
+
+                        time2 = new Date();
+                        time2.setHours(arrTime.substr(0, 2));
+                        time2.setMinutes(arrTime.substr(2, 2));
+                        time2.setSeconds(0);
+
+                        diffInMs = time2 - time1;
+                        const diffInHourArr = Math.round(diffInMs / 3600000);
+
+                        console.log("Departure delay " + diffInHourDept + " arrival delay " + diffInHourArr);
+
+                        var sqlUpdate = `UPDATE Flights SET ScheduledDeparture='${deptTime}', ScheduledArrival='${arrTime}', DepartureDelay=${diffInHourDept}, ArrivalDelay=${diffInHourArr} WHERE Date='${flightDateFormat}' AND AirlineId='${airlineId}' AND FlightNumber='${flightNumInt}'`;
+
+                        connection.query(sqlUpdate, function(err, result) {
+                            console.log("updating...")
+                                if (err) {
+                                        console.log(err);
+                                        return;
+                                }
+                                console.log("updated");
+                                res.redirect('flightupdated');
+                        });
         });
+
+//        console.log("type" + typeof oldDepartureTime);
+//        oldDepartureTime = oldDepartureTime.toString();
+//        oldArrivalTime = oldArrivalTime.toString();
+//
+//        var time1 = new Date();
+//        time1.setHours(oldDepartureTime.substr(0, 2));
+//        time1.setMinutes(oldDepartureTime.substr(2, 2));
+//        time1.setSeconds(0);
+//
+//        var time2 = new Date();
+//        time2.setHours(deptTime.substr(0, 2));
+//        time2.setMinutes(deptTime.substr(2, 2));
+//        time2.setSeconds(0);
+//
+//        var diffInMs = time2 - time;
+//        const diffInHourDept = Math.round(diffInMs / 3600000);
+//
+//        time1 = new Date();
+//        time1.setHours(oldArrivalTime.substr(0, 2));
+//        time1.setMinutes(oldDepartureTime.substr(2, 2));
+//        time1.setSeconds(0);
+//
+//        time2 = new Date();
+//        time2.setHours(arrTime.substr(0, 2));
+//        time2.setMinutes(arrTime.substr(2, 2));
+//        time2.setSeconds(0);
+//
+//        diffInMs = time2 - time;
+//        const diffInHourArr = Math.round(diffInMs / 3600000);
+//
+//        console.log("Departure delay " + diffInHourDept + " arrival delay " + diffInHourArr);
+//
+//        var sql = `UPDATE Flights SET ScheduledDeparture='${deptTime}', ScheduledArrival='${arrTime}', DepartureDelay='${diffInHourDept}',
+//        ArrivalDelay='${diffInHourArr}' WHERE Date='${flightDateFormat}' AND AirlineId='${airlineId}' AND FlightNumber='${flightNumInt}'`;
+//
+//	console.log(sql);
+//
+//        connection.query(sql, function(err, result) {
+//                if (err) {
+//                        //res.send(err)
+//                        return;
+//                }
+//                res.redirect('flightupdated');
+//        });
 });
 
 router.get('/flightupdated', function(req, res) {
