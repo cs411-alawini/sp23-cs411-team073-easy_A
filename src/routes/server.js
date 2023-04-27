@@ -294,13 +294,13 @@ router.post('/addairline', function(req, res) {
 	var airlineId = req.body.newairlineid;
 	var airlineName = req.body.newairlinename;
 
-	var sql = `INSERT INTO Airline VALUES ('${airlineId}', '${airlineName}')`;
+	var sql = `INSERT INTO Airline VALUES ('${airlineId}', '${airlineName}', 'SAIFACTORY')`;
 
 	console.log(sql);
 
         connection.query(sql, function(err, result) {
                 if (err) {
-                        //res.send(err)
+                        console.log(err);
                         return;
                 }
                 res.redirect('airlineadded');
